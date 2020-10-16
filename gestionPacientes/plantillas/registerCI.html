@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% load  static  %}
+
+{% block title %}Registro-CentroInvestigación{% endblock title %}
+
+{% block css %}
+    <!-- Icons font CSS-->
+    <link href="{% static 'vendor/mdi-font/css/material-design-iconic-font.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/font-awesome-4.7/css/font-awesome.min.css' %}" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+
+    <!-- Vendor CSS-->
+    <link href="{%  static 'vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/datepicker/daterangepicker.css' %}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" media="all">
+{% endblock css %}
+
+{% block content %}
+    <div class="page-wrapper bg-blue p-t-100 p-b-100 font-robo">
+        <div class="wrapper wrapper--w680">
+            <div class="card card-1">
+                <div class="card-heading"></div>
+                <div class="card-body">
+                    <h2 class="title">Registro de Centro Investigación</h2>
+                    <form  method="POST">
+                        {% csrf_token %}
+
+
+                        <div class="input-group">
+                            <input class="input--style-1" type="text" placeholder="NOMBRE DE CENTRO DE INVESTIGACIÓN*" name="investigatorcenter"  required>
+                        </div>
+
+                        <div class="input-group">
+                            <input class="input--style-1" type="text" placeholder="ACRONIMO*" name="acronym" required>
+                        </div>
+
+                        {% if msg != None %}
+                            <div class="alert alert-success"><font color="red">{{msg}}</font></div>
+                        {% endif %}
+                        {% if user_ID != None %}
+                            <div class="alert alert-success"><font color="red">{{user_ID}}</font></div>
+                        {% endif %}
+
+                        <div class="p-t-20">
+                            <button class="btn btn--radius btn--green" type="submit">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <!-- Jquery JS-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <!-- Vendor JS-->
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/moment.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/daterangepicker.js' %}"></script>
+
+    <!-- Main JS-->
+    <script src="{% static 'js/global.js' %}"></script>
+    <script src="{% static 'js/myJS.js' %}">
+
+    </script>
+{% endblock js %}

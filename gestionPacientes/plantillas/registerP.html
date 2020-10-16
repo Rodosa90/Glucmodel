@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load  static  %}
+
+{% block title %}Registro-Paciente{% endblock title %}
+
+{% block css %}
+    <!-- Icons font CSS-->
+    <link href="{% static 'vendor/mdi-font/css/material-design-iconic-font.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/font-awesome-4.7/css/font-awesome.min.css' %}" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+
+    <!-- Vendor CSS-->
+    <link href="{%  static 'vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/datepicker/daterangepicker.css' %}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" media="all">
+{% endblock css %}
+
+{% block content %}
+    <div class="page-wrapper bg-blue p-t-100 p-b-100 font-robo">
+        <div class="wrapper wrapper--w680">
+            <div class="card card-1">
+                <div class="card-heading"></div>
+                <div class="card-body">
+                    <h2 class="title">Registro de Paciente</h2>
+                    <form  method="POST">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input class="input--style-1" type="email" placeholder="CORREO ELECTRÓNICO*" name="email" required>
+                        </div>
+
+                        <div class="input-group">
+                            <input class="input--style-1" type="number" placeholder="ALTURA DEL PACIENTE (cm)" name="height">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE NACIMIENTO*" name="birth_date"required>
+                                    <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-md-offset-4">
+                                <div class="input-group">
+                                    <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE COMIENZO*" name="start_date"required>
+                                    <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <div class="rs-select2 js-select-simple select--no-search">
+                                        <select name="diabetes_type" required>
+                                            <option value="">
+                                                TIPO DE DIABETES*
+                                            </option>
+                                            {% for objeto in TYPES %}
+                                                <option>{{objeto.0}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-md-offset-4">
+                                <div class="input-group">
+                                    <div class="rs-select2 js-select-simple select--no-search">
+                                        <select name="treatment_id" required>
+                                            <option  value="">
+                                                TIPO DE TRATAMIENTO*
+                                            </option>
+                                            {% for objeto in obj %}
+                                                <option>{{objeto.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <input class="input--style-1" type="password" placeholder="CONTRASEÑA*" name="password1" id="con1" pattern=".{6,}" title="Debe contener mínimo 6 caracteres" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-md-offset-4">
+                                <div class="input-group">
+                                    <input class="input--style-1" type="password" placeholder="REPETIR CONTRASEÑA*" name="password2" id="con2" pattern=".{6,}" title="Debe contener mínimo 6 caracteres" required>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="row">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <input class="input--style-1" type="text" placeholder="DIRECCIÓN" name="address"required>
+
+                                </div>
+                            </div>
+
+                          </div>
+                             <div class="row">
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <input class="input--style-1" type="text" placeholder="CIUDAD" name="city"required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-md-offset-4">
+                                    <div class="input-group">
+                                        <input class="input--style-1 " type="text" placeholder="DNI" name="dni"required>
+
+                                    </div>
+                                </div>
+                             </div>
+
+
+                     <div class="row">
+
+                                <div class="col-md-6 col-md-offset-4">
+                                    <div class="input-group">
+                                        <input class="input--style-1 " type="text" placeholder="USERNAME" name="login"required>
+
+                                    </div>
+                                </div>
+                     </div>
+
+                    <div class="row">
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <input class="input--style-1 " type="text" placeholder="NOMBRE" name="name"required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-md-offset-4">
+                                    <div class="input-group">
+                                        <input class="input--style-1 " type="text" placeholder="PRIMER APELLIDO" name="surname1"required>
+
+                                    </div>
+                                </div>
+                     </div>
+                    <div class="row">
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <input class="input--style-1 " type="text" placeholder="SEGUNDO APELLIDO" name="surname2"required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-md-offset-4">
+                                    <div class="input-group">
+                                        <input class="input--style-1 " type="text" placeholder="TELÉFONO" name="number"required>
+
+                                    </div>
+                                </div>
+                     </div>
+                     <div class="row">
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <input class="input--style-1 " type="text" placeholder="GÉNERO" name="sex"required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-md-offset-4">
+                                    <div class="input-group">
+                                        <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA CONSENTIMIENTO" name="date_con"required>
+
+                                    </div>
+                                </div>
+                     </div>
+                    <div class="row">
+                                <div class="col-md-5">
+                                    <div class="input-group">
+                                        <input class="input--style-1 " type="text" placeholder="HIPERGLUCEMIA" name="hiper"required>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-md-offset-4">
+                                    <div class="input-group">
+                                        <input class="input--style-1 js-datepicker" type="text" placeholder="HIPOGLUCEMIA" name="hipo"required>
+
+                                    </div>
+                                </div>
+                     </div>
+                        {% if msg != None %}
+                            <div class="alert alert-success"><font color="red">{{msg}}</font></div>
+                        {% endif %}
+
+                        <div class="p-t-20">
+                            <button class="btn btn--radius btn--green" type="submit">Registrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <!-- Jquery JS-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <!-- Vendor JS-->
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/moment.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/daterangepicker.js' %}"></script>
+
+    <!-- Main JS-->
+    <script src="{% static 'js/global.js' %}"></script>
+
+{% endblock js %}

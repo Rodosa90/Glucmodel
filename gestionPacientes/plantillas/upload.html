@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load  static  %}
+
+{% block title %}Descarga{% endblock title %}
+
+{% block css %}
+
+    <!-- Icons font CSS-->
+    <link href="{% static 'vendor/mdi-font/css/material-design-iconic-font.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/font-awesome-4.7/css/font-awesome.min.css' %}" rel="stylesheet" media="all">
+    <!-- Font special for pages-->
+
+    <!-- Vendor CSS-->
+    <link href="{%  static 'vendor/select2/select2.min.css' %}" rel="stylesheet" media="all">
+    <link href="{% static 'vendor/datepicker/daterangepicker.css' %}" rel="stylesheet" media="all">
+
+    <!-- Main CSS-->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" media="all">
+    <style>
+
+    </style>
+{% endblock css %}
+
+{% block content %}
+    <div class="page-wrapper bg-blue p-t-100 p-b-100 font-robo">
+        <div class="wrapper wrapper--w680">
+            <div class="card card-1">
+                <div class="card-heading"></div>
+                <div class="card-body">
+                    <h2 class="title">Subir datos</h2>
+                    <form  method="POST" enctype="multipart/form-data" class="form-horizontal">
+                        {% csrf_token %}
+                        <div>
+                            {% if request.user.id != request.user.paciente.user_ptr_id %}
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select name="usuario" class="form-control" required>
+                                            <option value="">
+                                                SELECCIONAR PACIENTE
+                                            </option>
+                                            {% for objeto in pacientes %}
+                                                <option>{{objeto.username}}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <select name="tipo_archivo" class="form-control" onchange="mostrarAlerta(this)" required>
+                                            <option value="">
+                                                TIPO DE ARCHIVO
+                                            </option>
+                                                <option>FITBIT CALORÍAS</option>
+                                                <option>FITBIT RITMO CARDÍACO</option>
+                                                <option>FITBIT PASOS</option>
+                                                <option>FITBIT SUEÑO</option>
+                                                <option>FITBIT RESUMEN SUEÑO</option>
+                                                <option>FITBIT SIESTA</option>
+                                                <option>FITBIT RESUMEN SIESTA</option>
+                                                <option>MEDTRONIC</option>
+                                                <option>FREE STYLE SENSOR</option>
+                                                <option>ROCHE</option>
+                                        </select>
+                                        <div class="select-dropdown"></div>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <input type="file" name="files" id="files" required="True" multiple class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-3 col-sm-3 col-xs-12 col-md-offset-3" style="margin-bottom:10px;">
+                                <button class="btn btn--radius btn--green" type="submit">Subir</button>
+                            </div>
+                        </div>
+                        {% if msg != None %}
+                            <div class="alert alert-success"><font color="red">{{msg}}</font></div>
+                        {% endif %}
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block js %}
+    <!-- Jquery JS-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <!-- Vendor JS-->
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/moment.min.js' %}"></script>
+    <script src="{% static 'vendor/datepicker/daterangepicker.js' %}"></script>
+
+    <!-- Main JS-->
+    <script src="{% static 'js/global.js' %}"></script>
+    <script>
+    function mostrarAlerta(tipo) {
+        alert("Asegurate de seleccionar el tipo de archivo de " + tipo.options[tipo.selectedIndex].text);
+    }
+    </script>
+{% endblock js %}
