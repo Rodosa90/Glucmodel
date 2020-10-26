@@ -23,7 +23,7 @@
             <div class="card card-1">
                 <div class="card-heading"></div>
                 <div class="card-body">
-                    <h2 class="title">Registro de Paciente</h2>
+                    <h2 class="title">Registro de Pacientes</h2>
                     <form  method="POST">
                         {% csrf_token %}
                         <div class="input-group">
@@ -50,13 +50,26 @@
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="input-group">
+                                        <div class="rs-select2 js-select-simple select--no-search">
+                                            <select class="input--style-1 " name="type_in" required>
+                                                <option value="Tipo1">Diabetes de tipo 1</option>
+                                                <option value="Tipo2">Diabetes de tipo 2</option>
+                                                <option value="Otro">Diabetes de otro tipo</option>
+                                            </select>
+                                            <div class="select-dropdown"></div>
+<!--                                            <input class="input&#45;&#45;style-1 " type="text" placeholder="TIPO DE INVESTIGADOR" name="type_in"required>-->
+                                        </div>
+                                 </div>
+                            </div>
+                            <div class="col-md-6 col-md-offset-4">
+                                <div class="input-group">
                                     <div class="rs-select2 js-select-simple select--no-search">
-                                        <select name="diabetes_type" required>
-                                            <option value="">
-                                                TIPO DE DIABETES*
+                                        <select name="treatment_id" required>
+                                            <option  value="">
+                                                TIPO DE TRATAMIENTO*
                                             </option>
-                                            {% for objeto in TYPES %}
-                                                <option>{{objeto.0}}</option>
+                                            {% for tratamiento in tratamientos %}
+                                                <option>{{tratamiento.name}}</option>
                                             {% endfor %}
                                         </select>
                                         <div class="select-dropdown"></div>
@@ -66,12 +79,12 @@
                             <div class="col-md-6 col-md-offset-4">
                                 <div class="input-group">
                                     <div class="rs-select2 js-select-simple select--no-search">
-                                        <select name="treatment_id" required>
+                                        <select name="Medic_center_name" required>
                                             <option  value="">
-                                                TIPO DE TRATAMIENTO*
+                                                Centro Médico*
                                             </option>
-                                            {% for objeto in obj %}
-                                                <option>{{objeto.name}}</option>
+                                            {% for centro in centros %}
+                                                <option>{{centro.name}}</option>
                                             {% endfor %}
                                         </select>
                                         <div class="select-dropdown"></div>
@@ -184,6 +197,9 @@
                      </div>
                         {% if msg != None %}
                             <div class="alert alert-success"><font color="red">{{msg}}</font></div>
+                        {% endif %}
+                        {% if user_ID != None %}
+                            <div class="alert alert-success"><font color="red">{{user_ID}}</font></div>
                         {% endif %}
 
                         <div class="p-t-20">

@@ -1,4 +1,4 @@
-"""Glucmodel URL Configuration
+"""config URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from gestionPacientes import views
 
 urlpatterns = [
@@ -24,11 +24,11 @@ urlpatterns = [
     path('logout/', views.logout),
     path('new_password/', views.new_password),
     #path('register/', views.register),
-    path('registerI/', views.registerI),
-    path('registerM/', views.registerM),
-    path('registerP/', views.registerP),
-    path('registerCM/', views.registerCM),
-    path('registerCI/', views.registerCI),
+    path('investigador/', include('investigador.urls')),
+    path('medico/', include('medico.urls')),
+    path('paciente/', include('paciente.urls')),
+    path('centro/medico/', include('centro_medico.urls')),
+    path('centro/investigacion/', include('centro_investigacion.urls')),
     path('download/', views.download),
     path('upload/', views.upload),
     path('administracion/', views.administracion)
