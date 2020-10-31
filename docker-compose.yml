@@ -1,0 +1,35 @@
+version: '3.3'
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+    - db_model:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: glucmodel
+      MYSQL_USER: phpmyadmin
+      MYSQL_PASSWORD: Vz24Rik8*
+
+#  db1:
+#    image: mysql:5.7
+#    volumes:
+#        - db_glucnet:/var/lib/mysql
+#    restart: always
+#    environment:
+#      MYSQL_DATABASE: glucnet
+#      MYSQL_USER: root
+#      MYSQL_PASSWORD: admin
+
+  api1:
+    build: .
+    command: python manage.py runserver 5000
+    volumes:
+    - .:/usr/src/build
+    ports:
+    - "5000:5000"
+    depends_on:
+      - db
+volumes:
+  db_model:
+#  db_glucnet:
+

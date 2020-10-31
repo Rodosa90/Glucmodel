@@ -85,8 +85,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':'glucmodel',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'phpmyadmin',
+        'PASSWORD': 'Vz24Rik8*',
         'HOST': '127.0.0.1',
         'PORT': '3306',
 
