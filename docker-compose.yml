@@ -6,6 +6,7 @@ services:
     - db_model:/var/lib/mysql
     restart: always
     environment:
+      MYSQL_ROOT_PASSWORD: cambiame
       MYSQL_DATABASE: glucmodel
       MYSQL_USER: phpmyadmin
       MYSQL_PASSWORD: Vz24Rik8*
