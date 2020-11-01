@@ -26,7 +26,7 @@ SECRET_KEY = 'vy17vggz6s0&h14#lgc)clkd#(2gox7(nsy_6jlfl9xd4cismj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -87,7 +87,7 @@ DATABASES = {
         'NAME':'glucmodel',
         'USER': 'phpmyadmin',
         'PASSWORD': 'Vz24Rik8*',
-        'HOST': '127.0.0.1',
+        'HOST': 'db',
         'PORT': '3306',
 
     }
