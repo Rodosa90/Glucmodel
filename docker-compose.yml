@@ -7,9 +7,19 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: cambiame
-      MYSQL_DATABASE: glucmodel
-      MYSQL_USER: phpmyadmin
-      MYSQL_PASSWORD: Vz24Rik8*
+#      MYSQL_DATABASE: glucmodel
+#      MYSQL_USER: phpmyadmin
+#      MYSQL_PASSWORD: Vz24Rik8*
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: cambiame
+    ports:
+      - "8081:80"
 
 #  db1:
 #    image: mysql:5.7
