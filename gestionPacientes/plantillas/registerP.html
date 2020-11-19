@@ -52,6 +52,7 @@
                                 <div class="input-group">
                                         <div class="rs-select2 js-select-simple select--no-search">
                                             <select class="input--style-1 " name="type_in" required>
+                                                <option value="" disabled selected>Seleccionar un tipo de diabetes</option>
                                                 <option value="Tipo1">Diabetes de tipo 1</option>
                                                 <option value="Tipo2">Diabetes de tipo 2</option>
                                                 <option value="Otro">Diabetes de otro tipo</option>
@@ -116,7 +117,7 @@
                              <div class="row">
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <input class="input--style-1" type="text" placeholder="CIUDAD" name="city"required>
+                                        <input class="input--style-1" type="text" placeholder="CIUDAD" name="city">
 
                                     </div>
                                 </div>
@@ -128,17 +129,6 @@
                                 </div>
                              </div>
 
-
-                     <div class="row">
-
-                                <div class="col-md-6 col-md-offset-4">
-                                    <div class="input-group">
-                                        <input class="input--style-1 " type="text" placeholder="USERNAME" name="login"required>
-
-                                    </div>
-                                </div>
-                     </div>
-
                     <div class="row">
                                 <div class="col-md-5">
                                     <div class="input-group">
@@ -148,7 +138,7 @@
                                 </div>
                                 <div class="col-md-6 col-md-offset-4">
                                     <div class="input-group">
-                                        <input class="input--style-1 " type="text" placeholder="PRIMER APELLIDO" name="surname1"required>
+                                        <input class="input--style-1 " type="text" placeholder="PRIMER APELLIDO" name="surname1">
 
                                     </div>
                                 </div>
@@ -170,13 +160,18 @@
                      <div class="row">
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <input class="input--style-1 " type="text" placeholder="GÉNERO" name="sex"required>
-
+                                        <div class="rs-select2 js-select-simple select--no-search">
+                                            <select class="input--style-1 " name="sex" >
+                                                <option value="masculino">Masculino</option>
+                                                <option value="femenino">Femenino</option>
+                                            </select>
+                                            <div class="select-dropdown"></div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-md-offset-4">
                                     <div class="input-group">
-                                        <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA CONSENTIMIENTO" name="date_con"required>
+                                        <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA CONSENTIMIENTO" name="date_con">
 
                                     </div>
                                 </div>
@@ -184,13 +179,13 @@
                     <div class="row">
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <input class="input--style-1 " type="text" placeholder="HIPERGLUCEMIA" name="hiper"required>
+                                        <input class="input--style-1 " type="text" placeholder="HIPERGLUCEMIA" name="hiper">
 
                                     </div>
                                 </div>
                                 <div class="col-md-6 col-md-offset-4">
                                     <div class="input-group">
-                                        <input class="input--style-1 js-datepicker" type="text" placeholder="HIPOGLUCEMIA" name="hipo"required>
+                                        <input class="input--style-1 js-datepicker" type="text" placeholder="HIPOGLUCEMIA" name="hipo">
 
                                     </div>
                                 </div>

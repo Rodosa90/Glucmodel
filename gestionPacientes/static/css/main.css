@@ -308,6 +308,11 @@ input {
   padding: 9px 0;
   color: #666;
 }
+.input-group input:required::before {
+    content: "* ";
+    color: red;
+    font-weight: bold;
+}
 
 .input--style-1::-webkit-input-placeholder {
   /* WebKit, Blink, Edge */
@@ -458,3 +463,6 @@ input {
     padding-bottom: 40px;
   }
 }
+
+
+

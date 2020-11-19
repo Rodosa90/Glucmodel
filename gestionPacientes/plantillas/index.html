@@ -18,7 +18,7 @@
             {% endif %}
 
             <!-- Masthead Heading -->
-            <h1 class="masthead-heading text-uppercase mb-0">Hola {{request.user.username}}</h1>
+            <h1 class="masthead-heading text-uppercase mb-0">Hola {{request.user.user_id}}</h1>
 
             {% if request.user.id == request.user.paciente.user_ptr_id %}
                 <br>

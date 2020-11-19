@@ -26,13 +26,6 @@
                     <h2 class="title">Registro de Médico</h2>
                     <form  method="POST">
                         {% csrf_token %}
-
-
-                 <!--
-                        <div class="input-group">
-                            <input class="input--style-1 " type="text" placeholder="Username" name="login"required>
-                        </div>  -->
-
                         <div class="row">
                             <div class="col-md-6 col-md-offset-4">
                                 <div class="input-group">
@@ -51,10 +44,6 @@
                             </div>
                         </div>
 
-                   <!--     <div class="input-group">
-                            <span class="input--style-1" id="identificadorM" ></span>
-                            <input class="input--style-1" type="hidden" placeholder="NOMBRE DE USUARIO*" name="username" required>
-                        </div> -->
                         <div class="input-group">
                             <input class="input--style-1" type="email" placeholder="CORREO ELECTRÓNICO*" name="email" required>
                         </div>
@@ -63,13 +52,13 @@
                         <div class="row">
                             <div class="col-md-5">
                                 <div class="input-group">
-                                    <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE NACIMIENTO*" name="birth_date"required>
+                                    <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE NACIMIENTO*" name="birth_date">
                                     <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
                                 </div>
                             </div>
                             <div class="col-md-6 col-md-offset-4">
                                 <div class="input-group">
-                                    <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE COMIENZO*" name="start_date"required>
+                                    <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE COMIENZO*" name="start_date">
                                     <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
                                 </div>
                             </div>
@@ -83,7 +72,7 @@
                                 </div>
                                 <div class="col-md-6 col-md-offset-4">
                                     <div class="input-group">
-                                        <input class="input--style-1 " type="text" placeholder="PRIMER APELLIDO" name="surname1"required>
+                                        <input class="input--style-1 " type="text" placeholder="PRIMER APELLIDO" name="surname1">
 
                                     </div>
                                 </div>
@@ -105,13 +94,18 @@
                      <div class="row">
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <input class="input--style-1 " type="text" placeholder="GÉNERO" name="sex"required>
-
+                                       <div class="rs-select2 js-select-simple select--no-search">
+                                            <select class="input--style-1 " name="sex" >
+                                                <option value="masculino">Masculino</option>
+                                                <option value="femenino">Femenino</option>
+                                            </select>
+                                            <div class="select-dropdown"></div>
+                                        </div>
                                     </div>
                                 </div>
                              <div class="col-md-5">
                                         <div class="input-group">
-                                            <input class="input--style-1 " type="number" placeholder="BOARD NUMBER" name="board_number"required>
+                                            <input class="input--style-1 " type="number" placeholder="BOARD NUMBER" name="board_number">
 
                                         </div>
                                     </div>
@@ -141,7 +135,7 @@
                              <div class="row">
                                 <div class="col-md-5">
                                     <div class="input-group">
-                                        <input class="input--style-1" type="text" placeholder="CIUDAD" name="city"required>
+                                        <input class="input--style-1" type="text" placeholder="CIUDAD" name="city">
 
                                     </div>
                                 </div>
@@ -152,18 +146,6 @@
                                     </div>
                                 </div>
                              </div>
-
-<!--
-                     <div class="row">
-
-                                <div class="col-md-6 col-md-offset-4">
-                                    <div class="input-group">
-                                        <input class="input--style-1 " type="text" placeholder="Username" name="login"required>
-
-                                    </div>
-                                </div>
-                     </div>
--->
 
 
                         {% if msg != None %}
