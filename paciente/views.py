@@ -33,8 +33,10 @@ def register(request):
                     centro = c
 
             format_str = '%d/%m/%Y'
-            birth_date = datetime.strptime(birth_date, format_str)
-            start_date = datetime.strptime(start_date, format_str)
+            if birth_date:
+                birth_date = datetime.strptime(birth_date, format_str)
+            if start_date:
+                start_date = datetime.strptime(start_date, format_str)
 
             if Paciente.objects.filter(username=email).count():
                 return render(request, "registerP.html",
