@@ -219,6 +219,18 @@ h6 {
   background: #4dae3c;
 }
 
+.btn--blue {
+  width: 100%;
+  background: #0080FF;
+}
+
+.btn--blue:hover {
+  background: #008ECC;
+}
+
+.automatic-section {
+  margin-top: 35px;
+}
 /* ==========================================================================
    #DATE PICKER
    ========================================================================== */

@@ -32,9 +32,15 @@ def register(request):
                     centro=c
 
             format_str = '%d/%m/%Y'
+            if not birth_date:
+                birth_date = "01/01/1950"
+            birth_date = datetime.strptime(birth_date, format_str)
 
-            birth_date = (birth_date.strip()) if datetime.strptime('01/01/1950', format_str) else datetime.strptime(birth_date, format_str)
-            start_date = (start_date.strip()) if datetime.strptime('01/01/1950', format_str) else datetime.strptime(start_date, format_str)
+            if not start_date:
+                start_date = datetime.now().date()
+                start_date = str(start_date.day)+"/"+str(start_date.month)+"/"+str(start_date.year)
+
+            start_date = datetime.strptime(str(start_date), format_str)
 
 
             if Medico.objects.filter(username = email).count():
