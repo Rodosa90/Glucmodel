@@ -32,10 +32,9 @@ def register(request):
                     centro=c
 
             format_str = '%d/%m/%Y'
-            if birth_date:
-                birth_date = datetime.strptime(birth_date, format_str)
-            if start_date:
-                start_date = datetime.strptime(start_date, format_str)
+
+            birth_date = (birth_date.strip()) if datetime.strptime('01/01/1950', format_str) else datetime.strptime(birth_date, format_str)
+            start_date = (start_date.strip()) if datetime.strptime('01/01/1950', format_str) else datetime.strptime(start_date, format_str)
 
 
             if Medico.objects.filter(username = email).count():
@@ -84,4 +83,4 @@ def register(request):
         else:
             return render(request,'registerM.html',{'centros': centros})
     except Exception as e:
-        return render(request, 'registerM.html', { 'centros': centros,'msg': "Ha ocurrido un error"})
+        return render(request, 'registerM.html', { 'centros': centros,'msg': e})
