@@ -211,8 +211,8 @@ def logout(request):
 def download(request):
     try:
         try:
-            if request.user.id == request.user.paciente.user_ptr_id:# si es un paciente solo se puede descargar a si mismo
-                pacientes = Paciente.objects.filter(id=request.user.id)
+            if request.user.id == request.user.user_id:# si es un paciente solo se puede descargar a si mismo
+                pacientes = Paciente.objects.filter(user_id=request.user.id)
                 #aqui busco su fecha
                 menor = request.user.paciente.first_date
                 mayor = request.user.paciente.last_date
@@ -228,8 +228,8 @@ def download(request):
             if 'usuario' in request.POST and first_date == "": #si has seleccionado un usuario
                 msg = None
                 usuario = request.POST['usuario']
-                fecha_min = Paciente.objects.get(username=usuario).first_date
-                fecha_max = Paciente.objects.get(username=usuario).last_date
+                fecha_min = Paciente.objects.get(user_id=usuario).first_date
+                fecha_max = Paciente.objects.get(user_id=usuario).last_date
 
                 if(fecha_min == None):
                     fecha = None
@@ -318,8 +318,8 @@ def download(request):
             except:
                 return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': "La tabla está vacía"})
         return render(request, 'download.html', {'pacientes': pacientes, 'fecha': fecha})
-    except:
-        return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': "Ha ocurrido un error"})
+    except Exception as exc:
+        return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': "Ha ocurrido un error: " + exc})
 
 
 
@@ -328,7 +328,7 @@ def upload(request):
     try:
         template = "upload.html"
         try: #si es paceinte
-            if request.user.id == request.user.paciente.user_ptr_id:
+            if request.user.id == request.user.user_id:
                 pacientes = "nada"
 
         except: # si es un medicco o investigador o admin
@@ -361,7 +361,7 @@ def upload(request):
             #    return render(request, template, {'pacientes': pacientes, 'msg': "El archivo debe tener la extensión .csv"})
 
             try:
-                usuario = request.user.paciente.user_ptr_id # si es u paciente, saco su id
+                usuario = request.user.user_id # si es u paciente, saco su id
             except:# si es un  medico, el id lo saco del usuario seleccionado
                 usuario = request.POST['usuario'] #nombre del usuario
                 usuario = Paciente.objects.get(username=usuario).id
@@ -400,7 +400,7 @@ def upload(request):
                 fallo += "Los datos no corresponden con el nombre seleccionado o datos en blanco - "+csv_file.name + msg
         return render(request, template,{'msg': msg+" ----- DATOS SUBIDOS :[ "+subidos+' ] \n  NO SUBIDOS : \n [ '+fallo+ ' ]'})
     except Exception as inst:
-        msg = "Ha ocurrido un error "+ msg
+        msg = "Ha ocurrido un error "+ msg + " " + inst
         return render(request, template,{'msg': msg,'pacientes': pacientes})
 
 def roche(request, csv_file,usuario):
