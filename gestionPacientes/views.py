@@ -251,7 +251,7 @@ def download(request):
             try:
                 usuario = request.POST['usuario']
             except:
-                usuario = Paciente.objects.get(id=request.user.id).username
+                usuario = Paciente.objects.get(user_id=request.user.id).user_id
 
             format_str = '%d/%m/%Y'
             first_date = datetime.strptime(first_date, format_str)
@@ -259,15 +259,15 @@ def download(request):
         else:
             return render(request,'download.html',{'pacientes':pacientes, 'fecha':fecha})
 
-        id_usuario = Paciente.objects.get(username = usuario).id
-        df = pd.DataFrame(columns=['time', "id_user_id"])
+        id_usuario = Paciente.objects.get(user_id = usuario).user_id
+        df = pd.DataFrame(columns=['time', "user_id"])
         for tabla in campos:
-            items = eval(tabla).objects.filter(id_user_id = id_usuario,time__gte=first_date, time__lte= final_date)
+            items = eval(tabla).objects.filter(user_id = id_usuario,time__gte=first_date, time__lte= final_date)
             with open('items.csv', 'wb') as csv_file:
                 write_csv(items, csv_file)
             df_aux = pd.read_csv("items.csv")
             df_aux = df_aux.drop(columns = ["ID"])
-            df = df.merge(df_aux, on = ['time','id_user_id'], how = 'outer')
+            df = df.merge(df_aux, on = ['time','user_id'], how = 'outer')
             csv_file.close()  # cierra el archivo calorias para poder eliminarlo
             os.remove('items.csv')
         df = df.set_index("time", drop=True)
@@ -301,7 +301,7 @@ def download(request):
                 return response
         elif 'grafico' in request.POST:
             try:
-                df.pop('id_user_id')  # no quiero mostrar el id en el grafico
+                df.pop('user_id')  # no quiero mostrar el id en el grafico
                 df.plot()
                 plt.xticks(fontsize=7, rotation=20)
                 plt.savefig(BASE_DIR + "/gestionPacientes/static/img/grafico.png")
@@ -315,8 +315,8 @@ def download(request):
                 with open('gestionPacientes/plantillas/grafico.html', 'w') as f:
                     f.write(html)
                 return render(request, 'grafico.html', {'figure': "../static/img/grafico.png"})
-            except:
-                return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': "La tabla está vacía"})
+            except Exception as exce:
+                return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': exce})
         return render(request, 'download.html', {'pacientes': pacientes, 'fecha': fecha})
     except Exception as exc:
         return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': "Ha ocurrido un error: " + exc})
@@ -327,7 +327,15 @@ def upload(request):
     msg=''
     try:
         template = "upload.html"
+        # usuario = request.POST['usuario']
+
         try: #si es paceinte
+            if request.POST['usuario']:
+                pacientes = request.POST['usuario']
+                for p in Paciente.objects.all():
+                    if (pacientes == p.user_id):
+                        pacientesFinal = p
+
             if request.user.id == request.user.user_id:
                 pacientes = "nada"
 
@@ -361,13 +369,14 @@ def upload(request):
             #    return render(request, template, {'pacientes': pacientes, 'msg': "El archivo debe tener la extensión .csv"})
 
             try:
-                usuario = request.user.user_id # si es u paciente, saco su id
+                if not pacientesFinal:
+                    usuario = request.user.user_id # si es u paciente, saco su id
             except:# si es un  medico, el id lo saco del usuario seleccionado
                 usuario = request.POST['usuario'] #nombre del usuario
-                usuario = Paciente.objects.get(username=usuario).id
+                usuario = Paciente.objects.get(user_id=usuario).user_id
             try:
                 if tipo_archivo == "FITBIT CALORÍAS" or tipo_archivo == "FITBIT RITMO CARDÍACO" or tipo_archivo == "FITBIT PASOS" :
-                    msg, fecha_min, fecha_max = fitbit(request,csv_file,usuario,tipo_archivo)
+                    msg, fecha_min, fecha_max = fitbit(request,csv_file,pacientesFinal,tipo_archivo)
                 elif tipo_archivo == "FITBIT RESUMEN SUEÑO" or tipo_archivo == "FITBIT RESUMEN SIESTA":
                     msg = sleep_nap_resumen(request,csv_file,usuario,tipo_archivo)
                 elif tipo_archivo == "FITBIT SIESTA" or tipo_archivo == "FITBIT SUEÑO":
@@ -381,7 +390,7 @@ def upload(request):
 
                 try:
                     #Guarda las fechas maximas y minimas de cada paciente al insertas datos en la BD
-                    paciente = Paciente.objects.get(user_ptr_id=usuario)
+                    paciente = Paciente.objects.get(user_id=usuario)
                     paciente_fecha_min = paciente.first_date
                     paciente_fecha_max = paciente.last_date
 
@@ -396,8 +405,9 @@ def upload(request):
                     #subidos += "Datos subidos con éxito (sin fecha)- "+csv_file.name
                     return render(request, template, {'msg': msg})
 
-            except:
-                fallo += "Los datos no corresponden con el nombre seleccionado o datos en blanco - "+csv_file.name + msg
+            except Exception as exc:
+                # "Los datos no corresponden con el nombre seleccionado o datos en blanco - " + csv_file.name +
+                fallo += str(exc)
         return render(request, template,{'msg': msg+" ----- DATOS SUBIDOS :[ "+subidos+' ] \n  NO SUBIDOS : \n [ '+fallo+ ' ]'})
     except Exception as inst:
         msg = "Ha ocurrido un error "+ msg + " " + inst
@@ -474,31 +484,31 @@ def roche(request, csv_file,usuario):
                 if column[1] != "":
                     _, created = Glucosa_sangre.objects.update_or_create(
                         time=column[0],
-                        id_user_id=usuario,
+                        id_user=usuario,
                         defaults={"glucosa_sangre_mg_dL": column[1], }
                     )
                 if column[2] != "":
                     _, created = Carb_input.objects.update_or_create(
                         time=column[0],
-                        id_user_id=usuario,
+                        id_user=usuario,
                         defaults={"carb_input_EX": column[2], } #insulina rápida -----------
                     )
                 if column[3] != "":
                     _, created = Basal_rate.objects.update_or_create(
                         time=column[0],
-                        id_user_id=usuario,
+                        id_user=usuario,
                         defaults={"basal_rate_U_h": column[3], }
                     )
                 if column[4] != "":
                     _, created = Hito_roche.objects.update_or_create(
                         time=column[0],
-                        id_user_id=usuario,
+                        id_user=usuario,
                         defaults={"hito_roche": column[4], }
                     )
                 if column[5] != "":
                     _, created = Bolus_type.objects.update_or_create(
                         time=column[0],
-                        id_user_id=usuario,
+                        id_user=usuario,
                         defaults={"bolus_type": column[5], }
                     )
             msg = "Datos de la bomba de Roche subidos con exito"
@@ -620,49 +630,49 @@ def medtronic(request, csv_file,usuario):
             for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                 _, created = Glucosa_sangre.objects.update_or_create(
                     time=column[0],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults={"glucosa_sangre_mg_dL": column[1], }
                 )
         elif col == "Basal Rate (U/h)":
             for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                 _, created = Basal_rate.objects.update_or_create(
                     time=column[0],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults={"basal_rate_U_h": column[1], }
                 )
         elif col == "Bolus Type":
             for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                 _, created = Bolus_type.objects.update_or_create(
                     time=column[0],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults={"bolus_type": column[1], }
                 )
         elif col == "Bolus Volume Delivered (U)":
             for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                 _, created = Bolus_volume_delivered.objects.update_or_create(
                     time=column[0],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults={"bolus_volume_delivered_U": column[1], }
                 )
         elif col == "BWZ Carb Ratio (U/Ex)":
             for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                 _, created = Carb_ratio.objects.update_or_create(
                     time=column[0],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults={"carb_ratio_U_EX": column[1], }
                 )
         elif col == "BWZ Carb Input (exchanges)":
             for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                 _, created = Carb_input.objects.update_or_create(
                     time=column[0],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults={"carb_input_EX": column[1], }
                 )
         elif col == "Sensor Calibration BG (mg/dL)":
             for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                 _, created = Glucosa_sangre.objects.update_or_create(
                     time=column[0],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults={"glucosa_sangre_mg_dL": column[1], }
                 )
     if medtron_data_2 is not None:
@@ -677,7 +687,7 @@ def medtronic(request, csv_file,usuario):
         for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
             _, created = Glucosa_medtronic.objects.update_or_create(
                 time=column[0],
-                id_user_id=usuario,
+                id_user=usuario,
                 defaults={"glucosa_medtronic_mg_dL": column[1], }
             )
         msg = "Datos del sensor y la bomba de medtronic subidos con exito"
@@ -695,7 +705,7 @@ def sleep_nap_resumen(request, csv_file,usuario,tipo_archivo):
         for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
             _, created = Suenio_resumen.objects.update_or_create(
                 time=column[2],
-                id_user_id=usuario,
+                id_user=usuario,
                 defaults={
                     "sleep_main_sleep": column[3],
                     "sleep_efficiency": column[4],
@@ -717,7 +727,7 @@ def sleep_nap_resumen(request, csv_file,usuario,tipo_archivo):
             if tamanio == 12:
                 _, created = Siesta_resumen.objects.update_or_create(
                     time=column[2],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults= {
                         "nap_main_sleep":column[3],
                         "nap_efficiency":column[4],
@@ -735,7 +745,7 @@ def sleep_nap_resumen(request, csv_file,usuario,tipo_archivo):
             elif tamanio == 10:
                 _, created = Siesta_resumen.objects.update_or_create(
                     time=column[2],
-                    id_user_id=usuario,
+                    id_user=usuario,
                     defaults= {
                         "nap_main_sleep":column[3],
                         "nap_efficiency":column[4],
@@ -818,7 +828,7 @@ def sleep_nap(request, csv_file,usuario,tipo_archivo):
         for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
             _, created = Suenio.objects.update_or_create(
                 time=column[0],
-                id_user_id=usuario,
+                id_user=usuario,
                 defaults={"sleep_state": column[1], }
             )
         msg = "Sueño subido con éxito"
@@ -827,7 +837,7 @@ def sleep_nap(request, csv_file,usuario,tipo_archivo):
         for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
             _, created = Siesta.objects.update_or_create(
                 time=column[0],
-                id_user_id=usuario,
+                id_user=usuario,
                 defaults={"nap_state": column[1], }
 
             )
@@ -987,14 +997,14 @@ def free_style_sensor(request,csv_file,usuario):
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Insulina_rapida.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"insulina_rapida_U": column[1], }
                         )
                 elif col == "Carbohidratos (raciones)":
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Carb_input.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"carb_input_EX": column[1], }
                         )
                         _, created = Dietas.objects.update_or_create(
@@ -1007,7 +1017,7 @@ def free_style_sensor(request,csv_file,usuario):
                         carbo=column[1]/10
                         _, created = Carb_input.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"carb_input_EX": carbo, }
                         )
                         _, created = Dietas.objects.update_or_create(
@@ -1019,49 +1029,49 @@ def free_style_sensor(request,csv_file,usuario):
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Insulina_lenta.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"insulina_lenta_U": column[1], }
                         )
                 elif col == "Glucosa de la tira (mg/dL)":
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Glucosa_sangre.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"glucosa_sangre_mg_dL": column[1], }
                         )
                 elif col == "Cetonas (mmol/L)":
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Cetonas.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"cetonas_mmol_L": column[1], }
                         )
                 elif col == "Glucosa_total":
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Glucosa_freestyle.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"glucosa_freestyle_mg_dL": column[1], }
                         )
                 elif col == "Insulina de acción rápida sin valor numérico":
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Evento_insulina_rapida.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"evento_insulina_rapida": column[1], }
                         )
                 elif col == "Insulina de acción lenta sin valor numérico":
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Evento_insulina_lenta.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"evento_insulina_lenta": column[1], }
                         )
                 elif col == "Alimentos sin valor numérico":
                     for column in csv.reader(io_string, delimiter=',', quotechar="|"):  # inserta datos en la bd
                         _, created = Evento_carbohidratos.objects.update_or_create(
                             time=column[0],
-                            id_user_id=usuario,
+                            id_user=usuario,
                             defaults={"evento_carbohidratos": column[1], }
                         )
                 msg = "Datos de freestyle subidos con éxito"
@@ -1143,7 +1153,7 @@ def fitbit(request,csv_file,usuario,tipo_archivo):
         for column in csv.reader(io_string, delimiter=',', quotechar="|"):#inserta datos en la bd
             _, created = Calorias.objects.update_or_create(
                 time=column[0],
-                id_user_id=usuario,
+                id_user=usuario,
                 defaults={
                     "calories" : column[1],
                 }
@@ -1154,7 +1164,7 @@ def fitbit(request,csv_file,usuario,tipo_archivo):
         for column in csv.reader(io_string, delimiter=',', quotechar="|"):#inserta datos en la bd
             _, created = Ritmo_cardiaco.objects.update_or_create(
                 time=column[0],
-                id_user_id=usuario,
+                id_user=usuario,
                 defaults={
                     "heart_rate": column[1],
                 }
@@ -1165,7 +1175,7 @@ def fitbit(request,csv_file,usuario,tipo_archivo):
         for column in csv.reader(io_string, delimiter=',', quotechar="|"):#inserta datos en la bd
             _, created = Pasos.objects.update_or_create(
                 time=column[0],
-                id_user_id=usuario,
+                id_user=usuario,
                 defaults={"steps": column[1], }
 
             )
