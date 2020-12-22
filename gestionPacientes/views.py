@@ -55,7 +55,7 @@ def new_password(request):
             old_pas = request.POST['old_pas']
             new_pas = request.POST['new_pas']
             new_pas2 = request.POST['new_pas2']
-            user = authenticate(username=request.user.username, password=old_pas)
+            user = authenticate(username=request.user.user_id, password=old_pas)
             if user is None: #si no existe este usuario
                 return render(request,template,{'msg': "La contraseña es erronea"})
             elif new_pas != new_pas2:
@@ -237,9 +237,9 @@ def download(request):
                     return render(request, 'download.html', {'pacientes': pacientes, 'msg': msg, 'fecha':fecha,'usuario':usuario})
 
                 else:
-                    fecha_min = fecha_min.strftime("%d-%m-%Y") #lo paso a string con el formato que queremos
-                    fecha_max = fecha_max.strftime("%d-%m-%Y")
-                    fecha = "Existen registros de la fecha " + fecha_min + " a la fecha " + fecha_max
+                    # fecha_min = fecha_min.strftime("%d-%m-%Y") #lo paso a string con el formato que queremos
+                    # fecha_max = fecha_max.strftime("%d-%m-%Y")
+                    fecha = "Existen registros de la fecha " + str(fecha_min) + " a la fecha " + str(fecha_max)
                     return render(request, 'download.html', {'pacientes': pacientes, 'msg': msg, 'fecha':fecha,'usuario':usuario})
 
             #first_date = request.POST['first_date']
@@ -319,7 +319,7 @@ def download(request):
                 return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': exce})
         return render(request, 'download.html', {'pacientes': pacientes, 'fecha': fecha})
     except Exception as exc:
-        return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': "Ha ocurrido un error: " + exc})
+        return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': "Ha ocurrido un error: " + str(exc)})
 
 
 
@@ -371,22 +371,25 @@ def upload(request):
             try:
                 if not pacientesFinal:
                     usuario = request.user.user_id # si es u paciente, saco su id
+                    pacientesFinal = usuario
             except:# si es un  medico, el id lo saco del usuario seleccionado
                 usuario = request.POST['usuario'] #nombre del usuario
                 usuario = Paciente.objects.get(user_id=usuario).user_id
+                pacientesFinal = usuario
+
             try:
                 if tipo_archivo == "FITBIT CALORÍAS" or tipo_archivo == "FITBIT RITMO CARDÍACO" or tipo_archivo == "FITBIT PASOS" :
                     msg, fecha_min, fecha_max = fitbit(request,csv_file,pacientesFinal,tipo_archivo)
                 elif tipo_archivo == "FITBIT RESUMEN SUEÑO" or tipo_archivo == "FITBIT RESUMEN SIESTA":
-                    msg = sleep_nap_resumen(request,csv_file,usuario,tipo_archivo)
+                    msg = sleep_nap_resumen(request,csv_file,pacientesFinal,tipo_archivo)
                 elif tipo_archivo == "FITBIT SIESTA" or tipo_archivo == "FITBIT SUEÑO":
-                    msg, fecha_min, fecha_max = sleep_nap(request,csv_file,usuario,tipo_archivo)
+                    msg, fecha_min, fecha_max = sleep_nap(request,csv_file,pacientesFinal,tipo_archivo)
                 elif(tipo_archivo == "MEDTRONIC"):
-                    msg, fecha_min, fecha_max = medtronic(request,csv_file,usuario)
+                    msg, fecha_min, fecha_max = medtronic(request,csv_file,pacientesFinal)
                 elif (tipo_archivo == "FREE STYLE SENSOR"):
-                    msg, fecha_min, fecha_max = free_style_sensor(request, csv_file, usuario)
+                    msg, fecha_min, fecha_max = free_style_sensor(request, csv_file, pacientesFinal)
                 elif (tipo_archivo == "ROCHE"):
-                    msg, fecha_min, fecha_max = roche(request, csv_file, usuario)
+                    msg, fecha_min, fecha_max = roche(request, csv_file, pacientesFinal)
 
                 try:
                     #Guarda las fechas maximas y minimas de cada paciente al insertas datos en la BD
