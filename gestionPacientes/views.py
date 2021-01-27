@@ -216,7 +216,7 @@ def download(request):
                 #aqui busco su fecha
                 menor = request.user.paciente.first_date
                 mayor = request.user.paciente.last_date
-                fecha = "Existen registros de la fecha " + str(menor) + " a la fecha " + str(mayor)
+                fecha = ""+request.user.id+" Existen registros de la fecha " + str(menor) + " a la fecha " + str(mayor)
 
 
         except:
@@ -258,23 +258,30 @@ def download(request):
             final_date = datetime.strptime(final_date, format_str)
         else:
             return render(request,'download.html',{'pacientes':pacientes, 'fecha':fecha})
-
+        # se cambio user_id por id_user
+        #raise Exception("mi error: " + usuario)
         id_usuario = Paciente.objects.get(user_id = usuario).user_id
-        df = pd.DataFrame(columns=['time', "user_id"])
+        #raise Exception("mi error2: " + id_usuario)
+        #se cambio user_id por id_user
+        df = pd.DataFrame(columns=['time', "id_user_id"])
         for tabla in campos:
-            items = eval(tabla).objects.filter(user_id = id_usuario,time__gte=first_date, time__lte= final_date)
+            # se cambio user_id por id_user
+            items = eval(tabla).objects.filter(id_user_id = id_usuario,time__gte=first_date, time__lte= final_date)
+            #raise Exception("error3: " + items[0].id_user_id)
             with open('items.csv', 'wb') as csv_file:
                 write_csv(items, csv_file)
             df_aux = pd.read_csv("items.csv")
             df_aux = df_aux.drop(columns = ["ID"])
-            df = df.merge(df_aux, on = ['time','user_id'], how = 'outer')
+            # se cambio user_id por id_user
+            df = df.merge(df_aux, on = ['time','id_user_id'], how = 'outer')
             csv_file.close()  # cierra el archivo calorias para poder eliminarlo
             os.remove('items.csv')
+        #raise Exception(df)
         df = df.set_index("time", drop=True)
         df = df.sort_index()
         if 'ver' in request.POST:
             disenio = '{% extends "base.html" %}\n'
-            disenio += "{% load staticfiles i18n %}\n"
+            disenio += "{% load static %}\n"
             disenio += '{% block css %}\n'
             disenio += '<link href="{% static "gestionPacientes/static/css/freelancer.css" %}" rel="stylesheet" type="text/css">\n'
             disenio += '{% endblock css %}\n'
@@ -301,7 +308,7 @@ def download(request):
                 return response
         elif 'grafico' in request.POST:
             try:
-                df.pop('user_id')  # no quiero mostrar el id en el grafico
+                df.pop('id_user_id')  # no quiero mostrar el id en el grafico
                 df.plot()
                 plt.xticks(fontsize=7, rotation=20)
                 plt.savefig(BASE_DIR + "/gestionPacientes/static/img/grafico.png")
@@ -370,11 +377,11 @@ def upload(request):
 
             try:
                 if not pacientesFinal:
-                    usuario = request.user.user_id # si es u paciente, saco su id
+                    usuario = request.user.user_id # si es un paciente, saco su id
                     pacientesFinal = usuario
             except:# si es un  medico, el id lo saco del usuario seleccionado
                 usuario = request.POST['usuario'] #nombre del usuario
-                usuario = Paciente.objects.get(user_id=usuario).user_id
+                usuario = Paciente.objects.get(user_ptr_id=usuario).user_id
                 pacientesFinal = usuario
 
             try:
@@ -393,7 +400,7 @@ def upload(request):
 
                 try:
                     #Guarda las fechas maximas y minimas de cada paciente al insertas datos en la BD
-                    paciente = Paciente.objects.get(user_id=usuario)
+                    paciente = Paciente.objects.get(user_ptr_id=request.POST['usuario'])
                     paciente_fecha_min = paciente.first_date
                     paciente_fecha_max = paciente.last_date
 
@@ -404,6 +411,7 @@ def upload(request):
                         paciente.last_date = fecha_max
                         paciente.save()
                     subidos+=' '+csv_file.name
+
                 except:
                     #subidos += "Datos subidos con éxito (sin fecha)- "+csv_file.name
                     return render(request, template, {'msg': msg})
