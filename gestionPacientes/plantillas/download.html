@@ -60,7 +60,7 @@
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <div class="input-group">
-                                        <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE INICIO*" name="first_date"required>
+                                        <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE INICIO*" name="first_date"required value="{{fecha_inicio}}">
                                         <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
                                     </div>
                                 </div>
@@ -68,7 +68,7 @@
                             <div class="col-md-6 col-md-offset-4">
 
                                 <div class="input-group">
-                                    <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE FINAL*" name="final_date"required>
+                                    <input class="input--style-1 js-datepicker" type="text" placeholder="FECHA DE FINAL*" name="final_date"required value="{{fecha_final}}">
                                     <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
                                 </div>
                             </div>
@@ -183,7 +183,7 @@
                                             EN CASO DE DESCARGA INDICAR EL SEPARADOR DEL DOCUMENTO
                                         </option>
                                         <option>PUNTO Y COMA</option>
-                                        <option>COMA</option>
+                                        <option selected>COMA</option>
 
                                 </select>
                                 <div class="select-dropdown"></div>

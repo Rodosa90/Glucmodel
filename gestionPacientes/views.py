@@ -231,6 +231,8 @@ def download(request):
                 fecha_min = Paciente.objects.get(user_id=usuario).first_date
                 fecha_max = Paciente.objects.get(user_id=usuario).last_date
 
+                print('···············', fecha_min, fecha_max)
+
                 if(fecha_min == None):
                     fecha = None
                     msg = "No existen datos de este usuario"
@@ -240,7 +242,12 @@ def download(request):
                     # fecha_min = fecha_min.strftime("%d-%m-%Y") #lo paso a string con el formato que queremos
                     # fecha_max = fecha_max.strftime("%d-%m-%Y")
                     fecha = "Existen registros de la fecha " + str(fecha_min) + " a la fecha " + str(fecha_max)
-                    return render(request, 'download.html', {'pacientes': pacientes, 'msg': msg, 'fecha':fecha,'usuario':usuario})
+                    format_str = '%Y-%m-%d %H:%M:%S'
+                    fecha_min = fecha_min.strftime('%d/%m/%Y')
+                    fecha_max = fecha_max.strftime('%d/%m/%Y')
+                    #final_date = datetime.strptime(fecha_max, format_str).strftime('%d/%m/%Y')
+                    return render(request, 'download.html', {'pacientes': pacientes, 'msg': msg, \
+                                                             'fecha':fecha,'usuario':usuario, 'fecha_inicio': fecha_min ,'fecha_final': fecha_max })
 
             #first_date = request.POST['first_date']
             final_date = request.POST['final_date']
@@ -257,7 +264,7 @@ def download(request):
             first_date = datetime.strptime(first_date, format_str)
             final_date = datetime.strptime(final_date, format_str)
         else:
-            return render(request,'download.html',{'pacientes':pacientes, 'fecha':fecha})
+            return render(request,'download.html',{'pacientes':pacientes, 'fecha':fecha })
         # se cambio user_id por id_user
         #raise Exception("mi error: " + usuario)
         id_usuario = Paciente.objects.get(user_id = usuario).user_id
@@ -338,6 +345,7 @@ def upload(request):
 
         try: #si es paceinte
             if request.POST['usuario']:
+                #raise Exception("mi error: " + pacientes)
                 pacientes = request.POST['usuario']
                 for p in Paciente.objects.all():
                     if (pacientes == p.user_id):
@@ -419,7 +427,8 @@ def upload(request):
             except Exception as exc:
                 # "Los datos no corresponden con el nombre seleccionado o datos en blanco - " + csv_file.name +
                 fallo += str(exc)
-        return render(request, template,{'msg': msg+" ----- DATOS SUBIDOS :[ "+subidos+' ] \n  NO SUBIDOS : \n [ '+fallo+ ' ]'})
+        return render(request, template,{'msg': msg+" ----- DATOS SUBIDOS :[ "+"\n".join(subidos.split(' '))+\
+                                                ' ] \n  NO SUBIDOS : \n [ '+"\n".join(fallo.split(' '))+ ' ]', 'pacientes': pacientes })
     except Exception as inst:
         msg = "Ha ocurrido un error "+ msg + " " + inst
         return render(request, template,{'msg': msg,'pacientes': pacientes})

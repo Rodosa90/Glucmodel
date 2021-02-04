@@ -34,7 +34,7 @@
                             {% if request.user.id != request.user.paciente.user_ptr_id %}
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <select name="usuario" class="form-control" required>
+                                        <select name="usuario"  class="form-control" required>
                                             <option value="">
                                                 SELECCIONAR PACIENTE
                                             </option>
@@ -79,7 +79,7 @@
                             </div>
                         </div>
                         {% if msg != None %}
-                            <div class="alert alert-success"><font color="red">{{msg}}</font></div>
+                        <div class="alert alert-success"><pre><font color="red">{{msg}}</font></pre></div>
                         {% endif %}
 
                     </form>
