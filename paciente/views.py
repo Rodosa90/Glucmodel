@@ -17,7 +17,7 @@ def register(request):
         if request.method == 'POST':
             password1 = request.POST['password1']
             password2 = request.POST['password2']
-            email = request.POST['email']
+            email = request.POST['email'].strip() if request.POST['email'].strip() != '' else None #se quitan espacions en blanco en email
             first_name = request.POST['name']
             last_name = request.POST['surname1']
             birth_date = request.POST['birth_date']
@@ -28,8 +28,8 @@ def register(request):
             hiper= request.POST['hiper']
             hipo= request.POST['hipo']
 
-            print(hipo)
-            print(hiper)
+            #print(hipo)
+            #print(hiper)
 
             acronimo = str(Centro_medico.objects.filter(name=centroM)[0].acronym) + '{0:04d}'.format(
                 len(Paciente.objects.all()) + 1) + 'P'
@@ -59,30 +59,30 @@ def register(request):
 
             if not hipo:
                 hipo = 70
-
-            if Paciente.objects.filter(username=email).count():
+            #aqui se cambio email por uacronimo username=acronimo en vez de email
+            if Paciente.objects.filter(username=acronimo).count() > 0:
                 return render(request, "registerP.html",
-                              {'centros': centros, 'msg': "El paciente " + email + " ya existe"})
+                              {'centros': centros, 'msg': "El paciente " + acronimo + " ya existe"}) #aqui estaba email en vez de acronimo
 
             if password1 and password2 and password1 != password2:
                 return render(request, 'registerP.html', {'centros': centros, 'msg': "Las contraseñas deben coincidir"})
-
+            #print("mi errrorr:" ,email)
             paciente = Paciente(
                 password=make_password(password1),
-                username=email,
+                username=acronimo,  # aqui se cambio email por acronimo username=acronimo en vez de email
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
                 medical_center=centro,
                 birth_date=birth_date,
-                user_id=acronimo,
+                #user_id=acronimo,
                 treatment=treat,
                 diabetes_type=tipo_diabetes
 
             )
             paciente.save()
             usuario = Usuarios(
-                id=paciente.user_id,
+                id=paciente.username,
                 name=first_name,
                 address=request.POST['address'],
                 city=request.POST['city'],

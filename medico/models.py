@@ -8,7 +8,7 @@ class Medico(User):
     medical_center = models.ForeignKey(Centro_medico, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.user_id
+        return self.username
 
     class Meta:
         db_table = 'medico'

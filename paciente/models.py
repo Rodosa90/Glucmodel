@@ -31,7 +31,7 @@ class Paciente(User):
     last_date = models.DateTimeField(null=True, blank=True, help_text="Ultima fecha con datos del paciente")
 
     def __str__(self):
-        return self.user_id
+        return self.username
 
     class Meta:
         db_table = 'paciente'

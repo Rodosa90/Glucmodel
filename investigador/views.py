@@ -26,8 +26,8 @@ def register(request):
             invest_type = request.POST['type_in']
             first_name = request.POST['name']
             last_name = request.POST['surname1']
-            birth_date = request.POST['birth_date']
-            start_date = request.POST['start_date']
+            birth_date = None#request.POST['birth_date']
+            start_date = None#request.POST['start_date']
             centroI = request.POST['Medic_center_name']
 
             acronimo = str(Centro_investigacion.objects.filter(name=centroI)[0].acronym) + '{0:04d}'.format(len(Investigador.objects.all()) + 1) + 'I'
@@ -38,19 +38,19 @@ def register(request):
                     centro = c
 
             format_str = '%d/%m/%Y'
-            if not birth_date:
+            if birth_date is None:
                 birth_date = "01/01/1950"
             birth_date = datetime.strptime(birth_date, format_str)
 
-            if not start_date:
+            if start_date is None:
                 start_date = datetime.now().date()
                 start_date = str(start_date.day) + "/" + str(start_date.month) + "/" + str(start_date.year)
 
             start_date = datetime.strptime(str(start_date), format_str)
 
-            if Investigador.objects.filter(username=email).count():
+            if Investigador.objects.filter(username=acronimo).count() > 0:
                 return render(request, "registerI.html",
-                              { 'centros': centros, 'msg': "El investigador " + email + " ya existe"})
+                              { 'centros': centros, 'msg': "El investigador " + acronimo + " ya existe"})
 
             if password1 and password2 and password1 != password2:
                 return render(request, 'registerI.html',
@@ -58,19 +58,19 @@ def register(request):
                 # aqui se crea al investigador lo que se guarda en la BD
             investigador = Investigador(
                 password=make_password(password1),
-                username=email,
+                username=acronimo,
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
                 investigation_center=centro,
                 Investigator_type=invest_type,
-                user_id = acronimo
+                #user_id = acronimo
             )
             investigador.save()
 
             #investigador hereda de usuario
             usuario = Usuarios(
-                id=investigador.user_id,
+                id=investigador.username,
                 name=investigador.first_name,
                 address =request.POST['address'],
                 city = request.POST['city'],
@@ -80,7 +80,7 @@ def register(request):
                 nivel = 6,
                 password = investigador.password,
                 phone = request.POST['number'],
-                sex = request.POST['sex'],
+                sex = None, #request.POST['sex'],
                 surname1 = request.POST['surname1'],
                 surname2 = request.POST['surname2']
             )

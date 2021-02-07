@@ -55,7 +55,7 @@ def new_password(request):
             old_pas = request.POST['old_pas']
             new_pas = request.POST['new_pas']
             new_pas2 = request.POST['new_pas2']
-            user = authenticate(username=request.user.user_id, password=old_pas)
+            user = authenticate(username=request.user.username, password=old_pas)
             if user is None: #si no existe este usuario
                 return render(request,template,{'msg': "La contraseña es erronea"})
             elif new_pas != new_pas2:
@@ -211,8 +211,8 @@ def logout(request):
 def download(request):
     try:
         try:
-            if request.user.id == request.user.user_id:# si es un paciente solo se puede descargar a si mismo
-                pacientes = Paciente.objects.filter(user_id=request.user.id)
+            if request.user.id == request.user.username:# si es un paciente solo se puede descargar a si mismo
+                pacientes = Paciente.objects.filter(username=request.user.id)
                 #aqui busco su fecha
                 menor = request.user.paciente.first_date
                 mayor = request.user.paciente.last_date
@@ -228,8 +228,8 @@ def download(request):
             if 'usuario' in request.POST and first_date == "": #si has seleccionado un usuario
                 msg = None
                 usuario = request.POST['usuario']
-                fecha_min = Paciente.objects.get(user_id=usuario).first_date
-                fecha_max = Paciente.objects.get(user_id=usuario).last_date
+                fecha_min = Paciente.objects.get(username=usuario).first_date
+                fecha_max = Paciente.objects.get(username=usuario).last_date
 
                 print('···············', fecha_min, fecha_max)
 
@@ -251,14 +251,14 @@ def download(request):
 
             #first_date = request.POST['first_date']
             final_date = request.POST['final_date']
-            campos = request.POST.getlist("casillas[]")
+            campos = request.POST.getlist("casillas[]") #lista de lo que se le solicita a la BD al descagar
             if(len(campos) == 0):
                 msg = "Selecciona algún dato"
                 return render(request, 'download.html', {'pacientes': pacientes, 'msg': msg, 'fecha':fecha})
             try:
                 usuario = request.POST['usuario']
             except:
-                usuario = Paciente.objects.get(user_id=request.user.id).user_id
+                usuario = Paciente.objects.get(username=request.user.id).username
 
             format_str = '%d/%m/%Y'
             first_date = datetime.strptime(first_date, format_str)
@@ -267,10 +267,11 @@ def download(request):
             return render(request,'download.html',{'pacientes':pacientes, 'fecha':fecha })
         # se cambio user_id por id_user
         #raise Exception("mi error: " + usuario)
-        id_usuario = Paciente.objects.get(user_id = usuario).user_id
+        id_usuario = Paciente.objects.get(username = usuario).username
         #raise Exception("mi error2: " + id_usuario)
         #se cambio user_id por id_user
         df = pd.DataFrame(columns=['time', "id_user_id"])
+        #if( campos == 'todos')
         for tabla in campos:
             # se cambio user_id por id_user
             items = eval(tabla).objects.filter(id_user_id = id_usuario,time__gte=first_date, time__lte= final_date)
@@ -310,7 +311,7 @@ def download(request):
 
             with open('final.csv') as myfile:
                 response = HttpResponse(myfile, content_type='text/csv')
-                response['Content-Disposition'] = 'attachment; filename ='+ str(id_usuario) +'_'+ usuario + '.csv'
+                response['Content-Disposition'] = 'attachment; filename ='+ usuario + '.csv'
                 os.remove("final.csv")
                 return response
         elif 'grafico' in request.POST:
@@ -348,10 +349,10 @@ def upload(request):
                 #raise Exception("mi error: " + pacientes)
                 pacientes = request.POST['usuario']
                 for p in Paciente.objects.all():
-                    if (pacientes == p.user_id):
+                    if (pacientes == p.username):
                         pacientesFinal = p
 
-            if request.user.id == request.user.user_id:
+            if request.user.id == request.user.username:
                 pacientes = "nada"
 
         except: # si es un medicco o investigador o admin
@@ -385,11 +386,11 @@ def upload(request):
 
             try:
                 if not pacientesFinal:
-                    usuario = request.user.user_id # si es un paciente, saco su id
+                    usuario = request.user.username # si es un paciente, saco su id
                     pacientesFinal = usuario
             except:# si es un  medico, el id lo saco del usuario seleccionado
                 usuario = request.POST['usuario'] #nombre del usuario
-                usuario = Paciente.objects.get(user_ptr_id=usuario).user_id
+                usuario = Paciente.objects.get(user_ptr_id=usuario).username
                 pacientesFinal = usuario
 
             try:

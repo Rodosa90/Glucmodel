@@ -20,8 +20,8 @@ def register(request):
             board_number = request.POST['board_number']
             first_name  = request.POST['name']
             last_name = request.POST['surname1']
-            birth_date = request.POST['birth_date']
-            start_date = request.POST['start_date']
+            birth_date = None#request.POST['birth_date'] if request.POST['birth_date'].strip() != '' else None
+            start_date = None#request.POST['start_date']
             centroM = request.POST['Medic_center_name']
 
             acronimo = str(Centro_medico.objects.filter(name=centroM)[0].acronym) + '{0:04d}'.format(len(Medico.objects.all()) + 1) + 'M'
@@ -32,37 +32,39 @@ def register(request):
                     centro=c
 
             format_str = '%d/%m/%Y'
-            if not birth_date:
+            if birth_date is None:
+                #print('birth none')
                 birth_date = "01/01/1950"
+            #print('####### ', birth_date)
             birth_date = datetime.strptime(birth_date, format_str)
 
-            if not start_date:
+            if start_date is None:
                 start_date = datetime.now().date()
                 start_date = str(start_date.day)+"/"+str(start_date.month)+"/"+str(start_date.year)
 
             start_date = datetime.strptime(str(start_date), format_str)
 
 
-            if Medico.objects.filter(username = email).count():
-                return render(request,"registerM.html",{'centros': centros,'msg': "El médico " + email + " ya existe"})
+            if Medico.objects.filter(username = acronimo).count() > 0:
+                return render(request,"registerM.html",{'centros': centros,'msg': "El médico " + acronimo + " ya existe"})
 
             if password1 and password2 and password1 != password2:
                 return render(request, 'registerM.html', {'centros': centros,'msg': "Las contraseñas deben coincidir"})
 
             medico = Medico(
                 password = make_password(password1),
-                username = email,
+                username = acronimo,
                 first_name =first_name ,
                 last_name = last_name,
                 email = email,
                 medical_center = centro,
                 board_number = board_number,
-                user_id = acronimo
+                #user_id = acronimo
 
             )
             medico.save()
             usuario = Usuarios(
-                id=medico.user_id,
+                id=medico.username,
                 name= first_name ,
                 address=request.POST['address'],
                 city=request.POST['city'],
@@ -72,7 +74,7 @@ def register(request):
                 nivel=6,
                 password=medico.password,
                 phone=request.POST['number'],
-                sex=request.POST['sex'],
+                sex=None, #request.POST['sex'],
                 surname1=request.POST['surname1'],
                 surname2=request.POST['surname2']
             )

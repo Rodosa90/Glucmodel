@@ -14,7 +14,7 @@ class Investigador(User):
     investigation_center = models.ForeignKey(Centro_investigacion, on_delete=models.PROTECT)
 
     def __str__(self):
-        return self.user_id
+        return self.username
 
     class Meta:
         db_table = 'investigador'
