@@ -231,7 +231,7 @@ def download(request):
                 fecha_min = Paciente.objects.get(username=usuario).first_date
                 fecha_max = Paciente.objects.get(username=usuario).last_date
 
-                print('···············', fecha_min, fecha_max)
+                #print('···············', fecha_min, fecha_max)
 
                 if(fecha_min == None):
                     fecha = None
@@ -252,6 +252,7 @@ def download(request):
             #first_date = request.POST['first_date']
             final_date = request.POST['final_date']
             campos = request.POST.getlist("casillas[]") #lista de lo que se le solicita a la BD al descagar
+            #print('Campos··················',  campos, type(campos))
             if(len(campos) == 0):
                 msg = "Selecciona algún dato"
                 return render(request, 'download.html', {'pacientes': pacientes, 'msg': msg, 'fecha':fecha})
@@ -271,8 +272,15 @@ def download(request):
         #raise Exception("mi error2: " + id_usuario)
         #se cambio user_id por id_user
         df = pd.DataFrame(columns=['time', "id_user_id"])
-        #if( campos == 'todos')
-        for tabla in campos:
+        #Condicion para radio button de todos
+        campos_a_iterar = campos
+
+        if 'todos' in campos:
+            campos_a_iterar = [ 'Calorias', 'Pasos', 'Ritmo_cardiaco','Suenio','Siesta_resumen','Basal_rate','Bolus_type','Hito_roche',
+                                'Evento_insulina_lenta','Evento_insulina_rapida','Bolus_volume_delivered','Carb_ratio',
+                                'Carb_input','Glucosa_medtronic','Glucosa_freestyle','Glucosa_sangre','Insulina_rapida','Insulina_lenta','Cetonas','Peso','Evento_carbohidratos']
+
+        for tabla in campos_a_iterar:
             # se cambio user_id por id_user
             items = eval(tabla).objects.filter(id_user_id = id_usuario,time__gte=first_date, time__lte= final_date)
             #raise Exception("error3: " + items[0].id_user_id)
