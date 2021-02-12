@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from gestionPacientes import views
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,3 +35,6 @@ urlpatterns = [
     path('administracion/', views.administracion)
 
 ]
+#se agregan los estilos al Panel de DJango con el import  de : from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+urlpatterns += staticfiles_urlpatterns()
+
