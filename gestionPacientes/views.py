@@ -9,6 +9,7 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout as do_logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as do_login
+from django.contrib.auth.decorators import login_required
 from gestionPacientes.models import Usuarios, Pesos, Dietas
 from paciente.models import Paciente, Basal_rate, Bolus_type, Bolus_volume_delivered, Carb_input, Carb_ratio, \
     Glucosa_medtronic, Cetonas, Insulina_lenta, Insulina_rapida, Glucosa_sangre, Peso, Hito_roche, Suenio_resumen, \
@@ -207,7 +208,7 @@ def logout(request):
         return redirect('/')
 
 
-
+@login_required(login_url="login")
 def download(request):
     try:
         try:
@@ -345,7 +346,7 @@ def download(request):
         return render(request, 'download.html',{'pacientes': pacientes, 'fecha': fecha, 'msg': "Ha ocurrido un error: " + str(exc)})
 
 
-
+@login_required(login_url="login")
 def upload(request):
     msg=''
     try:

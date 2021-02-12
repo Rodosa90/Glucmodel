@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
-
+from django.contrib.auth.decorators import login_required
 from centro_medico.models import Centro_medico
 from medico.models import Medico
 from gestionPacientes.models import Usuarios
 
 # Create your views here.
 #registro medico
+@login_required(login_url="login")
 def register(request):
     try:
 

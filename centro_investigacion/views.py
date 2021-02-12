@@ -1,8 +1,11 @@
 from django.shortcuts import render
 from centro_investigacion.models import Centro_investigacion
+from django.contrib.auth.decorators import login_required
+
 
 # Create your views here.
 # registro Centro Investigación
+@login_required(login_url="login")
 def register(request):
     try:
         centros = Centro_investigacion.objects.all()

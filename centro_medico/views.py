@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from centro_medico.models import Centro_medico
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
+@login_required(login_url="login")
 def register(request):
     try:
         centros = Centro_medico.objects.all()

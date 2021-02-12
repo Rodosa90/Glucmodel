@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.decorators import login_required
 from centro_investigacion.models import Centro_investigacion
 from investigador.models import Investigador
 from gestionPacientes.models import Usuarios
 
 
 # Create your views here.
+@login_required(login_url="login")
 def register(request):
-    print(request.POST)
+    #print(request.POST)
     try:
         centros = Centro_investigacion.objects.all()
            # investigadores = Investigador.objects.all()

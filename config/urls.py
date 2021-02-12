@@ -18,13 +18,13 @@ from django.urls import include, path
 from gestionPacientes import views
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
+#poner el name para el login_required en las rutas
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.welcome),
-    path('login/', views.login),
-    path('logout/', views.logout),
+    path('login/', views.login,name="login"),
+    path('logout/', views.logout,name="logout"),
     path('new_password/', views.new_password),
-    #path('register/', views.register),
     path('investigador/', include('investigador.urls')),
     path('medico/', include('medico.urls')),
     path('paciente/', include('paciente.urls')),
@@ -33,6 +33,7 @@ urlpatterns = [
     path('download/', views.download),
     path('upload/', views.upload),
     path('administracion/', views.administracion)
+    #path('register/', views.register),
 
 ]
 #se agregan los estilos al Panel de DJango con el import  de : from django.contrib.staticfiles.urls import staticfiles_urlpatterns
