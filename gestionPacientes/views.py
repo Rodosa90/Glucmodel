@@ -277,7 +277,7 @@ def download(request):
         campos_a_iterar = campos
 
         if 'todos' in campos:
-            campos_a_iterar = [ 'Calorias', 'Pasos', 'Ritmo_cardiaco','Suenio','Siesta_resumen','Basal_rate','Bolus_type','Hito_roche',
+            campos_a_iterar = [ 'Calorias', 'Pasos', 'Ritmo_cardiaco','Siesta','Suenio','Suenio_resumen','Siesta_resumen','Basal_rate','Bolus_type','Hito_roche',
                                 'Evento_insulina_lenta','Evento_insulina_rapida','Bolus_volume_delivered','Carb_ratio',
                                 'Carb_input','Glucosa_medtronic','Glucosa_freestyle','Glucosa_sangre','Insulina_rapida','Insulina_lenta','Cetonas','Peso','Evento_carbohidratos']
 
