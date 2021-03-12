@@ -56,7 +56,7 @@
                             Actualizar
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown_update">
-                        <a class="dropdown-item" href="/medico/update">Actualizar Médico</a>
+                        <a class="dropdown-item"  href="/medico/update">Actualizar Médico</a>
                         <a class="dropdown-item" href="/investigador/update">Actualizar Investigador</a>
                         <a class="dropdown-item" href="/paciente/list-patients/">Actualizar Paciente</a>
                       <!--  <div class="dropdown-divider"></div>
@@ -76,12 +76,12 @@
                     </div>
                 </li>
                     <li class="nav-item mx-0 mx-lg-1">
-                        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/logout">Logout</a>
+                        <a class="nav-link  px-0 px-lg-3 rounded js-scroll-trigger" href="/logout">Logout</a>
                     </li>
                 {% endif %}
                 {% if not request.user.is_authenticated %}
                     <li class="nav-item mx-0 mx-lg-1">
-                        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="/logout">Login</a>
+                        <a class="nav-link  px-0 px-lg-3 rounded js-scroll-trigger" href="/logout">Login</a>
                     </li>
                 {% endif %}
             </ul>
